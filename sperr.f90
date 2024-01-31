@@ -8,6 +8,7 @@ module sperr
     public :: sperr_decomp_2d
     public :: sperr_comp_3d
     public :: sperr_decomp_3d
+    public :: sperr_trunc_3d
     public :: c_free
 
   ! Declare the C function prototype
@@ -67,12 +68,22 @@ module sperr
       import :: c_int, c_size_t, c_ptr
       implicit none
       type(c_ptr), value :: src
-      integer(c_size_t), value :: src_len
-      integer(c_int), value :: output_float, nthreads
+      integer(c_size_t), value :: src_len, nthreads
+      integer(c_int), value :: output_float
       integer(c_size_t) :: dimx, dimy, dimz
       type(c_ptr) :: dst
       integer(c_int) :: sperr_decomp_3d
     end function
+
+    function sperr_trunc_3d(src, src_len, pct, dst, dst_len) bind(C, name="sperr_trunc_3d")
+      import :: c_ptr, c_size_t, c_int
+      type(c_ptr), value :: src
+      integer(c_size_t), value :: src_len
+      integer(c_int), value :: pct
+      type(c_ptr) :: dst
+      integer(c_size_t) :: dst_len
+      integer(c_int) :: sperr_trunc_3d
+    end function sperr_trunc_3d
 
     subroutine c_free(ptr) bind(c, name="free")
       import :: c_ptr
