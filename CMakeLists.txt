@@ -42,9 +42,6 @@ set(TEST_3D_FILES
 # Create an object library for common source files in the src folder
 add_library(sperr_object OBJECT ${SRC_FILES})
 
-# Check if the test folder exists, and create it if not
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test)
-
 # Create executables in the root directory and link with the object library
 add_executable(2d ${TEST_2D_FILES} $<TARGET_OBJECTS:sperr_object>)
 add_executable(3d ${TEST_3D_FILES} $<TARGET_OBJECTS:sperr_object>)
