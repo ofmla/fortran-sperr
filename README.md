@@ -37,9 +37,10 @@ fpm build --link-flag "-L/path/to/SPERR/lib"
 ```
 or by setting the `FPM_LDFLAGS=-L/path/to/SPERR/lib` environment variable. The executables will be named `test_2d` and `test_3d`. They will be located in a folder named `app`, which resides within another folder in the `build` directory.
 
-### Note :page_facing_up:
+### Notes :page_facing_up:
 
-Input files, such as `lena512.float` and `density_128x128x256.d64` required by the examples, are not included. Obtain them [here](https://github.com/NCAR/SPERR/tree/main/test_data) and place them in the corresponding folder depending on the build system used.
+* Input files, such as `lena512.float` and `density_128x128x256.d64` required by the examples, are not included. Obtain them [here](https://github.com/NCAR/SPERR/tree/main/test_data) and place them in the corresponding folder depending on the build system used.
+*  **(de)compression functions are working properly but proper functions for bit stream I/O are still required for real applications **
 
 ## License
 
