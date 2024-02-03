@@ -1,0 +1,21 @@
+name = "fortran-sperr"
+license = "BSD"
+author = "Oscar Mojica"
+copyright = "Copyright 2024 Oscar Mojica"
+description = "Fortran interface to SPERR - a library for lossy compression of scientific data."
+
+[build]
+auto-executables = false
+auto-examples = false
+auto-tests = false
+link = ["SPERR"]
+
+[[executable]]
+name = "test_2d"
+source-dir = "test"
+main = "test_sperr_2d.f90"
+
+[[executable]]
+name = "test_3d"
+source-dir = "test"
+main = "test_sperr_3d.f90"
