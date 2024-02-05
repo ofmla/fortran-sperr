@@ -40,7 +40,7 @@ or by setting the `FPM_LDFLAGS=-L/path/to/SPERR/lib` environment variable. The e
 ### Notes :page_facing_up:
 
 * Input files, such as `lena512.float` and `density_128x128x256.d64` required by the examples, are not included. Obtain them [here](https://github.com/NCAR/SPERR/tree/main/test_data) and place them in the corresponding folder depending on the build system used.
-*  **(de)compression functions are working properly but proper functions for bit stream I/O are still required for real applications **
+*  **(de)compression functions are working properly but proper functions for bit stream I/O are still required for real applications**
 
 ## License
 
