@@ -4,18 +4,18 @@ program test_sperr_2d
   implicit none
 
   integer, parameter :: iunit = 99
-  integer(c_int) :: sizeofreal, ios, ierr
+  integer(c_int) :: ios, ierr
   integer(c_int) :: is_float, mode, out_inc_header, out_is_float
   real(c_float), allocatable, target :: inbuf(:)
   type(c_ptr) :: ptr_in, bitstream, ptr_start, ptr_out
-  real(c_float), pointer :: comp_array(:), decomp_array(:)
+  real(c_float), pointer :: decomp_array(:)
+  character, pointer :: buffer(:)
   real(c_double) :: quality
   integer(c_size_t) :: dimx, dimy, stream_len, out_dimx, out_dimy, out_dimz
   integer(c_intptr_t) :: adda, header_len
 
   ! Assign values to Fortran variables
   header_len = 10
-  sizeofreal = 4
   dimx = 512
   dimy = 512
   is_float = 1
@@ -43,7 +43,7 @@ program test_sperr_2d
     write(*,*) "C comp function call failed with code", ierr
     stop
   end if
-  call c_f_pointer(bitstream, comp_array, [stream_len/sizeofreal])
+  call c_f_pointer(bitstream, buffer, [stream_len])
   
   open(unit=iunit, file='output.stream', form='unformatted', &
        access='stream', status='replace', action='write', iostat=ios)
@@ -51,7 +51,7 @@ program test_sperr_2d
     write(*,*) "Error opening stream file"
     stop
   end if
-  write(iunit) comp_array(:)
+  write(iunit) buffer(1:stream_len)
   close(iunit)
 
   out_dimx=0
@@ -65,7 +65,7 @@ program test_sperr_2d
     stop
   endif 
 
-  adda= transfer( source=c_loc(comp_array), mold=adda)
+  adda= transfer( source=c_loc(buffer), mold=adda)
   adda= adda + header_len
   ptr_start = transfer(adda, ptr_start)
   ptr_out = c_null_ptr

@@ -8,7 +8,8 @@ program test_sperr_3d
   integer(c_int) :: is_float, mode, out_inc_header, out_is_float
   real(c_double), allocatable, target :: inbuf(:)
   type(c_ptr) :: ptr_in, bitstream, ptr_out
-  real(c_double), pointer :: comp_array(:), decomp_array(:)
+  real(c_double), pointer :: decomp_array(:)
+  character, pointer :: buffer(:)
   real(c_double) :: quality
   integer(c_size_t) :: dimx, dimy, dimz, chunk_x, chunk_y, chunk_z
   integer(c_size_t) :: stream_len, out_dimx, out_dimy, out_dimz, nthreads
@@ -47,7 +48,7 @@ program test_sperr_3d
     write(*,*) "C comp function call failed with code", ierr
     stop
   end if
-  call c_f_pointer(bitstream, comp_array, [stream_len/sizeofreal])
+  call c_f_pointer(bitstream, buffer, [stream_len])
   
   open(unit=iunit, file='output.stream', form='unformatted', &
        access='stream', status='replace', action='write', iostat=ios)
@@ -55,7 +56,7 @@ program test_sperr_3d
     write(*,*) "Error opening stream file"
     stop
   end if
-  write(iunit) comp_array(:)
+  write(iunit) buffer(1:stream_len)
   close(iunit)
 
   out_dimx=0
