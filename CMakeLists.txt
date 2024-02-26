@@ -16,12 +16,18 @@ set(CMAKE_Fortran_FLAGS_RELEASE "-O3")
 # Set compiler flags based on build type
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE}}")
 
-# External dependencies (provide default values, users can override)
-set(EXTERN_INCLUDE_DIR /path/to/lossy_compression/include CACHE PATH "Path to lossy_compression include directory")
-set(EXTERN_LIB_DIR /path/to/lossy_compression/lib CACHE PATH "Path to lossy_compression lib directory")
+find_package(PkgConfig REQUIRED)
+pkg_search_module(LIBRARY_NAME REQUIRED SPERR)
 
-include_directories(${EXTERN_INCLUDE_DIR})
-link_directories(${EXTERN_LIB_DIR})
+include_directories(${LIBRARY_NAME_INCLUDE_DIRS})
+link_directories(${LIBRARY_NAME_LIBRARY_DIRS})
+
+# External dependencies (provide default values, users can override)
+#set(EXTERN_INCLUDE_DIR /path/to/lossy_compression/include CACHE PATH "Path to lossy_compression include directory")
+#set(EXTERN_LIB_DIR /path/to/lossy_compression/lib CACHE PATH "Path to lossy_compression lib directory")
+
+#include_directories(${EXTERN_INCLUDE_DIR})
+#link_directories(${EXTERN_LIB_DIR})
 
 # List of source files
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -40,11 +46,11 @@ set(TEST_3D_FILES
 )
 
 # Create an object library for common source files in the src folder
-add_library(sperr_object OBJECT ${SRC_FILES})
+#add_library(sperr_object OBJECT ${SRC_FILES})
 
 # Create executables in the root directory and link with the object library
-add_executable(2d ${TEST_2D_FILES} $<TARGET_OBJECTS:sperr_object>)
-add_executable(3d ${TEST_3D_FILES} $<TARGET_OBJECTS:sperr_object>)
+add_executable(2d ${TEST_2D_FILES} ${SRC_FILES})
+add_executable(3d ${TEST_3D_FILES} ${SRC_FILES})
 
 foreach(TARGET_NAME 2d 3d)
   target_link_libraries(${TARGET_NAME} SPERR)
