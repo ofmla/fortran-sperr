@@ -1,0 +1,86 @@
+name: SPERR Fortran Bindings Testing
+
+# Define when to trigger the workflow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test_bindings:
+    name: Test SPERR Fortran bindings on ubuntu-latest
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        gcc-version: [9, 10, 11]
+
+    steps:
+      # Setup GCC
+      - name: Get compiler
+        uses: fortran-lang/setup-fortran@v1
+        with:
+          compiler: gcc
+          version: ${{ matrix.gcc-version }}
+
+      # Clone the SPERR repository
+      - name: Clone SPERR repository
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          depth: 1
+          branch: 'v0.8.1'
+          owner: 'NCAR'
+          repository: 'SPERR'
+
+      # Access the cloned repository content and build the library
+      - name: Access cloned repository content and build library
+        run: |
+          echo "ROOT"
+          ls -la
+          echo "CLONED REPO"
+          cd SPERR
+          cmake -S . -B build -DBUILD_CLI_UTILITIES=OFF -DBUILD_UNIT_TESTS=OFF -DCMAKE_VERBOSE_MAKEFILE=ON
+          cmake --build build
+          sudo cmake --install build
+
+      # Run C examples to generate output files
+      - name: Run C examples
+        run: |
+          cd SPERR/examples/C_API
+          ln -s ../../test_data .
+          gcc -g -O3 2d.c -o 2d.out -I/usr/local/include -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSPERR
+          gcc -g -O3 3d.c -o 3d.out -I/usr/local/include -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSPERR
+          ./2d.out ./test_data/lena512.float 512 512 1 2.5
+          mv output.stream 2d-output.stream
+          mv output.data 2d-output.data
+          ./3d.out ./test_data/density_128x128x256.d64 128 128 256 1 2.6 -d
+          mv output.stream 3d-output.stream
+          mv output.data 3d-output.data
+          cp ${GITHUB_WORKSPACE}/SPERR/test_data/lena512.float ${RUNNER_TEMP}
+          cp ${GITHUB_WORKSPACE}/SPERR/test_data/density_128x128x256.d64 ${RUNNER_TEMP}
+          cp *.data *.stream ${RUNNER_TEMP}
+
+      # Clone the own repository to access test data files
+      - name: Clone own repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Build executables and compare output files
+      - name: Build executables and compare files
+        run: |
+          cmake -S . -B build -DCMAKE_VERBOSE_MAKEFILE=ON
+          cmake --build build
+          cp ${RUNNER_TEMP}/lena512.float build/
+          cp ${RUNNER_TEMP}/density_128x128x256.d64 build/
+          cd build
+          ./2d
+          cmp ${RUNNER_TEMP}/2d-output.stream output.stream && echo "Files are identical" || { echo "Files are different"; exit 1; }
+          cmp ${RUNNER_TEMP}/2d-output.data output.data && echo "Files are identical" || { echo "Files are different"; exit 1; }
+          rm -f output.data output.stream
+          ./3d
+          cmp ${RUNNER_TEMP}/3d-output.stream output.stream && echo "Files are identical" || { echo "Files are different"; exit 1; }
+          cmp ${RUNNER_TEMP}/3d-output.data output.data && echo "Files are identical" || { echo "Files are different"; exit 1; }
+          rm -f output.data output.stream
