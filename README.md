@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Fortran](https://img.shields.io/badge/Fortran-734f96?logo=fortran&style=flat)](https://fortran-lang.org)
 [![fpm](https://img.shields.io/badge/fpm-Fortran_package_manager-734f96)](https://fpm.fortran-lang.org)
+![Build Status](https://github.com/ofmla/fortran_sperr/actions/workflows/test_bindings.yml/badge.svg)
 
 
 Fortran bindings to [SPERR](https://github.com/NCAR/SPERR) - a library for lossy compression of scientific data. :clamp:
@@ -20,17 +21,19 @@ To build the examples in this project you need:
 
 ### CMake
 
-In [CMakeLists.txt](https://github.com/ofmla/fortran-sperr/blob/main/CMakeLists.txt) I added two CMake variables (EXTERN_INCLUDE_DIR and EXTERN_LIB_DIR) to specify the paths to the include and lib directories of the SPERR library. Users can provide their paths by setting these variables when running CMake.
+In [CMakeLists.txt](https://github.com/ofmla/fortran-sperr/blob/main/CMakeLists.txt), the project uses `find_package(PkgConfig REQUIRED)` and `pkg_search_module(LIBRARY_NAME REQUIRED SPERR)` to locate the `SPERR` library. This means that users no longer need to manually specify the paths to the include and lib directories.
 
-Configure the build with
+To configure the build, simply run:
 ```
-cmake -S . -DEXTERN_INCLUDE_DIR=/path/to/SPERR/include -DEXTERN_LIB_DIR=/path/to/SPERR/lib
+cmake -S .
 ```
-To build the executables run
+To build the executables using `make`, run:
 ```
 make
 ```
 The executables will be named `2d` and `3d`, and they will be placed in the root directory.
+
+Please note that when installing the SPERR library with CMake, you may need to use `sudo` as regular users typically don't have write permissions for directories like `/usr` and `/usr/local` in modern Linux systems.
 
 ### fpm
 
@@ -39,7 +42,9 @@ Alternatively, you can build the executables via fpm with (assuming SPERR is alr
 ```
 fpm build --link-flag "-L/path/to/SPERR/lib"
 ```
-or by setting the `FPM_LDFLAGS=-L/path/to/SPERR/lib` environment variable and then `fpm build`. The executables will be named `test_2d` and `test_3d`. They will be located in a folder named `app`, which resides within another folder (compiler+hash) in the `build` directory.
+or by setting the `FPM_LDFLAGS=-L/path/to/SPERR/lib` environment variable and then `fpm build`. The executables will be named `test_2d` and `test_3d`. They will be located in a folder named `app`, which resides within another folder named after the compiler and hash in the `build` directory.
+
+When using fpm to build executables, the build artifacts are placed in a directory named after the compiler and hash (e.g., `gfortran_50F62D7499E64B65`). Here, the hash (`50F62D7499E64B65` in this example) represents a unique identifier for the specific build configuration. If you need more accurate information about how fpm organizes build artifacts and the significance of the hash, it's best to consult the fpm documentation or reach out to the developers of the tool for clarification.
 
 ### Notes :page_facing_up:
 
