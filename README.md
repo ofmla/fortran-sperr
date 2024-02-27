@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Fortran](https://img.shields.io/badge/Fortran-734f96?logo=fortran&style=flat)](https://fortran-lang.org)
 [![fpm](https://img.shields.io/badge/fpm-Fortran_package_manager-734f96)](https://fpm.fortran-lang.org)
-![Build Status](https://github.com/ofmla/fortran_sperr/actions/workflows/test_bindings.yml/badge.svg)
+![Build Status](https://github.com/ofmla/fortran-sperr/actions/workflows/test_bindings.yml/badge.svg)
 
 
 Fortran bindings to [SPERR](https://github.com/NCAR/SPERR) - a library for lossy compression of scientific data. :clamp:
