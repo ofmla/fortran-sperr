@@ -22,13 +22,6 @@ pkg_search_module(LIBRARY_NAME REQUIRED SPERR)
 include_directories(${LIBRARY_NAME_INCLUDE_DIRS})
 link_directories(${LIBRARY_NAME_LIBRARY_DIRS})
 
-# External dependencies (provide default values, users can override)
-#set(EXTERN_INCLUDE_DIR /path/to/lossy_compression/include CACHE PATH "Path to lossy_compression include directory")
-#set(EXTERN_LIB_DIR /path/to/lossy_compression/lib CACHE PATH "Path to lossy_compression lib directory")
-
-#include_directories(${EXTERN_INCLUDE_DIR})
-#link_directories(${EXTERN_LIB_DIR})
-
 # List of source files
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
@@ -44,9 +37,6 @@ set(TEST_2D_FILES
 set(TEST_3D_FILES
   ${TEST_DIR}/test_sperr_3d.f90
 )
-
-# Create an object library for common source files in the src folder
-#add_library(sperr_object OBJECT ${SRC_FILES})
 
 # Create executables in the root directory and link with the object library
 add_executable(2d ${TEST_2D_FILES} ${SRC_FILES})
